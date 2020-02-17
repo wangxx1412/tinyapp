@@ -5,20 +5,21 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodemon express_server.js"
+    "start": "nodemon -L express_server.js"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/wangxx1412/tinyapp.git"
   },
   "keywords": [],
-  "author": "",
+  "author": "Xiaoxuan Wang",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/wangxx1412/tinyapp/issues"
   },
   "homepage": "https://github.com/wangxx1412/tinyapp#readme",
   "dependencies": {
+    "body-parser": "^1.19.0",
     "ejs": "^3.0.1",
     "express": "^4.17.1"
   },
