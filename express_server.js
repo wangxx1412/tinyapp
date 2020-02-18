@@ -1,5 +1,6 @@
 const express = require("express");
 const cookieParser = require("cookie-parser");
+const bcrypt = require("bcrypt");
 const {
   urlsForUser,
   checkUser,
@@ -122,7 +123,8 @@ app.post("/urls/:shortURL", (req, res) => {
 app.post("/login", (req, res) => {
   const loginUser = { email: req.body.email, password: req.body.password };
   const result = checkUser(loginUser, users);
-  if (result.passwordmatch === true && result.emailmatch === true) {
+  console.log(result);
+  if (result.match) {
     res.cookie("user_id", result.id);
     res.redirect("/urls");
   } else {
@@ -147,14 +149,18 @@ app.post("/register", (req, res) => {
   if (req.body.email === "" || req.body.password === "") {
     res.status(400).send("Email and password can't be empty");
   } else {
-    const newUser = { id, email: req.body.email, password: req.body.password };
-    const result = checkUser(newUser, users);
-    if (result.emailmatch) {
-      res.status(result.code).send("Email has been taken");
-    }
-    users[id] = newUser;
-    res.cookie("user_id", id);
-    res.redirect("/urls");
+    bcrypt.genSalt(10, function(err, salt) {
+      bcrypt.hash(req.body.password, salt, function(err, hash) {
+        const newUser = { id, email: req.body.email, password: hash };
+        const result = checkUser(newUser, users);
+        if (result.emailmatch) {
+          res.status(result.code).send("Email has been taken");
+        }
+        users[id] = newUser;
+        res.cookie("user_id", id);
+        res.redirect("/urls");
+      });
+    });
   }
 });
 

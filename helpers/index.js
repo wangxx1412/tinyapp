@@ -1,3 +1,4 @@
+const bcrypt = require("bcrypt");
 const urlsForUser = (id, urlDatabase) => {
   let result = {};
   for (const url in urlDatabase) {
@@ -25,23 +26,31 @@ const checkUser = (loginUser, users) => {
     passwordmatch: false,
     code: 200,
     msg: "",
-    id: ""
+    id: "",
+    match: false
   };
   for (const userId in users) {
     if (users[userId].email === loginUser.email) {
+      console.log(users[userId].password);
       result.emailmatch = true;
-      if (users[userId].password === loginUser.password) {
+      const isMatch = bcrypt.compareSync(
+        loginUser.password,
+        users[userId].password
+      );
+
+      if (isMatch) {
         result.passwordmatch = true;
         result.id = userId;
+        result.match = true;
+        return result;
+      } else {
+        result.msg = "Password don't match.";
+        result.code = 403;
         return result;
       }
-      result.msg = "Password don't match.";
-      result.code = 403;
-      return result;
     }
   }
   result.msg = "User not found.";
-  result.code = 403;
   return result;
 };
 
