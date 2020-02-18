@@ -22,10 +22,10 @@ app.get("/", (req, res) => {
   res.send("Hello!");
 });
 
+//Create a new url
 app.post("/urls", (req, res) => {
   const shortURL = generateRandomString(6);
   urlDatabase[shortURL] = req.body.longURL;
-  console.log(urlDatabase);
   res.redirect(`/urls/${shortURL}`);
 });
 
@@ -55,6 +55,14 @@ app.get("/urls/:shortURL", (req, res) => {
 app.post("/urls/:shortURL/delete", (req, res) => {
   const { shortURL } = req.params;
   delete urlDatabase[shortURL];
+  res.redirect("/urls");
+});
+
+// Update url
+app.post("/urls/:shortURL", (req, res) => {
+  const { shortURL } = req.params;
+  urlDatabase[shortURL] = req.body.newURL;
+  console.log(req.body);
   res.redirect("/urls");
 });
 
