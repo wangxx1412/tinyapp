@@ -31,7 +31,6 @@ const checkUser = (loginUser, users) => {
   };
   for (const userId in users) {
     if (users[userId].email === loginUser.email) {
-      console.log(users[userId].password);
       result.emailmatch = true;
       const isMatch = bcrypt.compareSync(
         loginUser.password,
