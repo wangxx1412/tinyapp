@@ -1,5 +1,7 @@
 # TinyApp Project
 
+[![Build Status](https://travis-ci.org/wangxx1412/tinyapp.svg?branch=master)](https://travis-ci.org/wangxx1412/tinyapp)
+
 TinyApp is a full stack web application built with Node and Express that allows users to shorten long URLs.
 
 ## Final Product
