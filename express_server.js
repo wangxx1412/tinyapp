@@ -1,5 +1,6 @@
 const express = require("express");
 const cookieParser = require("cookie-parser");
+const methodOverride = require("method-override");
 const bcrypt = require("bcrypt");
 const cookieSession = require("cookie-session");
 const {
@@ -24,6 +25,7 @@ app.use(
     maxAge: 24 * 60 * 60 * 1000
   })
 );
+app.use(methodOverride("_method"));
 
 app.set("view engine", "ejs");
 
@@ -67,7 +69,6 @@ app.post("/urls", (req, res) => {
     userID: req.session.user_id,
     created: new Date()
   };
-  console.log(urlDatabase);
   res.redirect(`/urls/${shortURL}`);
 });
 
@@ -128,7 +129,7 @@ app.get("/urls/:shortURL", (req, res) => {
 });
 
 // Delete single shortURL
-app.post("/urls/:shortURL/delete", (req, res) => {
+app.delete("/urls/:shortURL", (req, res) => {
   if (req.session.user_id === undefined) {
     res.cookie("errmsg", "Please login to continue");
     res.redirect("/login");
@@ -147,7 +148,7 @@ app.post("/urls/:shortURL/delete", (req, res) => {
 });
 
 // Update ShortURL
-app.post("/urls/:shortURL", (req, res) => {
+app.put("/urls/:shortURL", (req, res) => {
   if (req.session.user_id === undefined) {
     res.cookie("errmsg", "Please login to continue");
     res.redirect("/login");
