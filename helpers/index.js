@@ -1,3 +1,4 @@
+// Return the user obj given email
 const getUserByEmail = function(email, database) {
   for (const user in database) {
     if (database[user].email === email) {
@@ -7,6 +8,7 @@ const getUserByEmail = function(email, database) {
   return null;
 };
 
+// Fetch all urls that belong to single user
 const urlsForUser = (id, urlDatabase) => {
   let result = {};
   for (const url in urlDatabase) {
@@ -26,6 +28,7 @@ const urlsForUser = (id, urlDatabase) => {
   return result;
 };
 
+// Return boolean value for checking url's owner
 const checkUrlOwner = (paramUrl, id, urlDatabase) => {
   for (const url in urlDatabase) {
     if (url === paramUrl) {
@@ -37,6 +40,7 @@ const checkUrlOwner = (paramUrl, id, urlDatabase) => {
   return true;
 };
 
+// Generate random string given length
 const generateRandomString = leng => {
   return Math.random()
     .toString(36)

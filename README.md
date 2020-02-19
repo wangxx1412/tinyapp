@@ -4,8 +4,8 @@ TinyApp is a full stack web application built with Node and Express that allows 
 
 ## Final Product
 
-!["Screenshot of Urls Page"](https://github.com/wangxx1412/tinyapp/master/docs/urls-page.png)
-!["Screenshot of Register Page"](https://github.com/wangxx1412/tinyapp/master/docs/register-page.png)
+!["Screenshot of Urls Page"](https://github.com/wangxx1412/tinyapp/blob/master/docs/urls-page.png?raw=true)
+!["Screenshot of Register Page"](https://github.com/wangxx1412/tinyapp/blob/master/docs/register-page.png?raw=true)
 
 ## Dependencies
 
@@ -17,11 +17,18 @@ TinyApp is a full stack web application built with Node and Express that allows 
 - cookie-session
 - cookie-parser
 
+## Dev-dependencies
+
+- Mocha
+- Chai
+- nodemon
+
 ## Getting Started
 
 - Install all dependencies (using the `npm install` command).
 - Run the development web server using the `npm start` command.
 - Run the test codes using the `npm test` command.
+- Open http://localhost:8080 in your browser.
 
 ## Functionalities
 
@@ -31,3 +38,7 @@ TinyApp is a full stack web application built with Node and Express that allows 
 - Browse the urls with ease
 - Password is encrypted and url is created with date
 - Use cookie-session to secure your info
+
+## License
+
+MIT
