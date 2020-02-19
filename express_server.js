@@ -67,6 +67,9 @@ app.post("/urls", (req, res) => {
   urlDatabase[shortURL] = {
     longURL: req.body.longURL,
     userID: req.session.user_id,
+    visitor: [],
+    visits: [],
+    count: 0,
     created: new Date()
   };
   res.redirect(`/urls/${shortURL}`);
@@ -74,10 +77,34 @@ app.post("/urls", (req, res) => {
 
 // ShortURL to longURL
 app.get("/u/:shortURL", (req, res) => {
-  if (urlDatabase[req.params.shortURL] === undefined) {
+  const { shortURL } = req.params;
+  if (urlDatabase[shortURL] === undefined) {
     res.status(403).send("Not a valid shortURL");
   }
-  const longURL = urlDatabase[req.params.shortURL]["longURL"];
+  urlDatabase[shortURL].count++;
+
+  if (req.session.visitor_id === undefined) {
+    const visitor_id = generateRandomString(6);
+    urlDatabase[shortURL]["visitor"].push(visitor_id);
+    req.session.visitor_id = visitor_id;
+    urlDatabase[shortURL]["visits"].push({ visitor_id, created: new Date() });
+  } else {
+    urlDatabase[shortURL]["visits"].push({
+      visitor_id: req.session.visitor_id,
+      created: new Date()
+    });
+    const found = urlDatabase[shortURL]["visitor"].includes(
+      req.session.visitor_id
+    );
+    if (!found) {
+      urlDatabase[shortURL]["visitor"].push({
+        visitor_id: req.session.visitor_id,
+        created: new Date()
+      });
+    }
+  }
+
+  const longURL = urlDatabase[shortURL]["longURL"];
   res.redirect(longURL);
 });
 
@@ -117,12 +144,14 @@ app.get("/urls/:shortURL", (req, res) => {
         urlDatabase[url]["created"].getFullYear();
     }
   }
-
   let templateVars = {
     shortURL,
+    count: urlDatabase[shortURL]["count"],
     longURL: urlDatabase[shortURL]["longURL"],
     user: users,
     user_id: req.session.user_id,
+    visitorsNum: urlDatabase[shortURL]["visitor"].length,
+    visits: urlDatabase[shortURL]["visits"],
     created: dateStr
   };
   res.render("urls_show", templateVars);
@@ -165,6 +194,8 @@ app.put("/urls/:shortURL", (req, res) => {
   urlDatabase[shortURL] = {
     longURL: req.body.newURL,
     userID: req.session.user_id,
+    count: urlDatabase[shortURL]["count"],
+    visitor: [],
     created: new Date()
   };
   res.redirect("/urls");
