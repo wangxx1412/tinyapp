@@ -67,6 +67,7 @@ app.post("/urls", (req, res) => {
     userID: req.session.user_id,
     created: new Date()
   };
+  console.log(urlDatabase);
   res.redirect(`/urls/${shortURL}`);
 });
 

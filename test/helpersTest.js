@@ -1,6 +1,10 @@
 const { assert } = require("chai");
 
-const { getUserByEmail, urlsForUser, checkUrl } = require("../helpers/index");
+const {
+  getUserByEmail,
+  urlsForUser,
+  checkUrlOwner
+} = require("../helpers/index");
 
 const testUsers = {
   userRandomID: {
@@ -16,8 +20,16 @@ const testUsers = {
 };
 
 const urlDatabase = {
-  b6UTxQ: { longURL: "https://www.tsn.ca", userID: "dsj4lW" },
-  i3BoGr: { longURL: "https://www.google.ca", userID: "43d8lW" }
+  b6UTxQ: {
+    longURL: "https://www.tsn.ca",
+    userID: "dsj4lW",
+    created: new Date(2018, 11, 24, 10, 33, 30, 0)
+  },
+  i3BoGr: {
+    longURL: "https://www.google.ca",
+    userID: "43d8lW",
+    created: new Date(2018, 11, 24, 10, 33, 30, 0)
+  }
 };
 
 describe("getUserByEmail", function() {
@@ -36,7 +48,12 @@ describe("getUserByEmail", function() {
 describe("urlsForUser", function() {
   it("should return an object contains longURL given existed userID", function() {
     const result = urlsForUser("dsj4lW", urlDatabase);
-    const expectedOutput = { b6UTxQ: "https://www.tsn.ca" };
+    const expectedOutput = {
+      b6UTxQ: {
+        longURL: "https://www.tsn.ca",
+        created: "12/24/2018"
+      }
+    };
     assert.deepEqual(result, expectedOutput);
   });
   it("should return an empaty object given an unexist userID", function() {
@@ -46,13 +63,13 @@ describe("urlsForUser", function() {
   });
 });
 
-describe("checkUrl", function() {
+describe("checkUrlOwner", function() {
   it("should return true given owner's id and his url", function() {
-    const result = checkUrl("b6UTxQ", "dsj4lW", urlDatabase);
+    const result = checkUrlOwner("b6UTxQ", "dsj4lW", urlDatabase);
     assert.equal(result, true);
   });
   it("should return false given url not belongs to user", function() {
-    const result = checkUrl("b6UTxQ", "43d8lW", urlDatabase);
+    const result = checkUrlOwner("b6UTxQ", "43d8lW", urlDatabase);
     assert.equal(result, false);
   });
 });
