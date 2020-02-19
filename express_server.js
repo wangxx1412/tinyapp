@@ -1,13 +1,14 @@
 const express = require("express");
 const cookieParser = require("cookie-parser");
 const bcrypt = require("bcrypt");
-var cookieSession = require("cookie-session");
+const cookieSession = require("cookie-session");
 const {
   urlsForUser,
   checkUrlOwner,
   generateRandomString,
   getUserByEmail
 } = require("./helpers/index");
+
 const app = express();
 const PORT = 8080;
 
