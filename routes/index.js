@@ -30,17 +30,16 @@ router.get("/", (req, res) => {
 // Get the urlsindex page
 router.get("/urls", (req, res) => {
   if (req.session.user_id === undefined) {
-    res.cookie("errmsg", "Please login to continue");
-    res.redirect("/login");
+    res.send("Please login/register to continue");
+  } else {
+    const tempUrls = urlsForUser(req.session.user_id, urlDatabase);
+    let templateVars = {
+      urls: tempUrls,
+      user: users,
+      user_id: req.session.user_id
+    };
+    res.render("urls_index", templateVars);
   }
-
-  const tempUrls = urlsForUser(req.session.user_id, urlDatabase);
-  let templateVars = {
-    urls: tempUrls,
-    user: users,
-    user_id: req.session.user_id
-  };
-  res.render("urls_index", templateVars);
 });
 
 // Create a new url
@@ -93,18 +92,17 @@ router.get("/u/:shortURL", (req, res) => {
 // Get the create new shortURL page
 router.get("/urls/new", (req, res) => {
   if (req.session.user_id === undefined) {
-    res.cookie("errmsg", "Please login to continue");
-    res.redirect("/login");
+    res.send("Please login/register to continue");
+  } else {
+    let templateVars = { user: users, user_id: req.session.user_id };
+    res.render("urls_new", templateVars);
   }
-  let templateVars = { user: users, user_id: req.session.user_id };
-  res.render("urls_new", templateVars);
 });
 
 // Get the detail page for single shortURL
 router.get("/urls/:shortURL", (req, res) => {
   if (req.session.user_id === undefined) {
-    res.cookie("errmsg", "Please login to continue");
-    res.redirect("/login");
+    res.send("Please login/register to continue");
   }
 
   const { shortURL } = req.params;
@@ -142,60 +140,61 @@ router.get("/urls/:shortURL", (req, res) => {
 // Delete single shortURL
 router.delete("/urls/:shortURL", (req, res) => {
   if (req.session.user_id === undefined) {
-    res.cookie("errmsg", "Please login to continue");
-    res.redirect("/login");
+    res.send("Please login/register to continue");
+  } else {
+    const result = checkUrlOwner(
+      req.params.shortURL,
+      req.session.user_id,
+      urlDatabase
+    );
+    if (!result) {
+      res.status(403).send("Operation denied, not your url");
+    }
+    const { shortURL } = req.params;
+    delete urlDatabase[shortURL];
+    res.redirect("/urls");
   }
-  const result = checkUrlOwner(
-    req.params.shortURL,
-    req.session.user_id,
-    urlDatabase
-  );
-  if (!result) {
-    res.status(403).send("Operation denied, not your url");
-  }
-  const { shortURL } = req.params;
-  delete urlDatabase[shortURL];
-  res.redirect("/urls");
 });
 
 // Update ShortURL
 router.put("/urls/:shortURL", (req, res) => {
   if (req.session.user_id === undefined) {
-    res.cookie("errmsg", "Please login to continue");
-    res.redirect("/login");
+    res.send("Please login/register to continue");
+  } else {
+    const result = checkUrlOwner(
+      req.params.shortURL,
+      req.session.user_id,
+      urlDatabase
+    );
+    if (!result) {
+      res.status(403).send("Operation denied, not your url");
+    }
+    const { shortURL } = req.params;
+    urlDatabase[shortURL] = {
+      longURL: req.body.newURL,
+      userID: req.session.user_id,
+      count: urlDatabase[shortURL]["count"],
+      visitor: [],
+      visits: urlDatabase[shortURL]["visits"],
+      created: new Date()
+    };
+    res.redirect("/urls");
   }
-  const result = checkUrlOwner(
-    req.params.shortURL,
-    req.session.user_id,
-    urlDatabase
-  );
-  if (!result) {
-    res.status(403).send("Operation denied, not your url");
-  }
-  const { shortURL } = req.params;
-  urlDatabase[shortURL] = {
-    longURL: req.body.newURL,
-    userID: req.session.user_id,
-    count: urlDatabase[shortURL]["count"],
-    visitor: [],
-    visits: urlDatabase[shortURL]["visits"],
-    created: new Date()
-  };
-  res.redirect("/urls");
 });
 
 // Get the login page
 router.get("/login", (req, res) => {
   if (req.session.user_id !== undefined) {
     res.redirect("/urls");
+  } else {
+    let errmsg;
+    if (req.cookies["errmsg"]) {
+      errmsg = req.cookies["errmsg"];
+      res.clearCookie("errmsg");
+    }
+    let templateVars = { user: users, user_id: req.session.user_id, errmsg };
+    res.render("login", templateVars);
   }
-  let errmsg;
-  if (req.cookies["errmsg"]) {
-    errmsg = req.cookies["errmsg"];
-    res.clearCookie("errmsg");
-  }
-  let templateVars = { user: users, user_id: req.session.user_id, errmsg };
-  res.render("login", templateVars);
 });
 
 // POST login user api
